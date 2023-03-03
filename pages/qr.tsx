@@ -103,17 +103,27 @@ interface WrapperProps {
   readonly qrShown: boolean;
 }
 const Wrapper = styled.div<WrapperProps>`
+  --scaling-factor: 4;
   --border-radius: 0.5rem;
+  --blur: calc(var(--scaling-factor) * 5px);
+
+  @media (max-width: 480px) {
+    --scaling-factor: 3;
+  }
+  @media (max-width: 480px) {
+    --scaling-factor: 3;
+  }
+
   font-family: 'Nunito', sans-serif;
   background-color: #050316;
   height: 100%;
-  padding-top: 12rem;
+  padding-top: calc(var(--scaling-factor) * 3rem);
   transition: padding-top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   ${(props) =>
     props.qrShown &&
     css`
-      padding-top: 4rem;
+      padding-top: calc(var(--scaling-factor) * 1rem);
     `};
 `;
 
@@ -131,87 +141,86 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-bottom: 4rem;
+  margin-bottom: calc(var(--scaling-factor) * 1rem);
 `;
 
 const Input = styled.input`
-  margin-bottom: 5rem;
-  font-size: 2rem;
+  margin-bottom: calc(var(--scaling-factor) * 1rem);
+  font-size: calc(var(--scaling-factor) * 0.5rem);
   border-radius: var(--border-radius);
   border: none;
   text-align: center;
   width: 100%;
 
-  box-shadow: 0 0 50px rgba(116, 203, 255, 0.3);
+  box-shadow: 0 0 calc(var(--scaling-factor) * 0.75rem) rgba(116, 203, 255, 0.3);
   transition: box-shadow 0.3s;
 
   &:focus {
-    box-shadow: 0 0 50px rgba(116, 203, 255, 1);
+    box-shadow: 0 0 calc(var(--scaling-factor) * 0.75rem) rgba(116, 203, 255, 1);
   }
 `;
 
 const animate = keyframes`
  0% {
-    filter: blur(20px) hue-rotate(0deg) saturate(100%);
+    filter: blur(var(--blur)) hue-rotate(0deg) saturate(100%);
     transform: scale(1.2) rotate(-3deg);
   }
   12.5% {
-    filter: blur(20px) hue-rotate(90deg) saturate(135%);
+    filter: blur(var(--blur)) hue-rotate(90deg) saturate(135%);
     transform: scale(1.3) rotate(1.5deg);
   }
   16.66% {
-    filter: blur(20px) hue-rotate(119.952deg) saturate(147%);
+    filter: blur(var(--blur)) hue-rotate(119.952deg) saturate(147%);
     transform: scale(1.27) rotate(3deg);
   }
   25% {
-    filter: blur(20px) hue-rotate(180deg) saturate(170%);
+    filter: blur(var(--blur)) hue-rotate(180deg) saturate(170%);
     transform: scale(1.2) rotate(0deg);
   }
   33.3% {
-    filter: blur(20px) hue-rotate(239.76deg) saturate(147%);
+    filter: blur(var(--blur)) hue-rotate(239.76deg) saturate(147%);
     transform: scale(1.27) rotate(-3deg);
   }
   37.5% {
-    filter: blur(20px) hue-rotate(270deg) saturate(135%);
+    filter: blur(var(--blur)) hue-rotate(270deg) saturate(135%);
     transform: scale(1.3) rotate(-1.5deg);
   }
   50% {
-    filter: blur(20px) hue-rotate(360deg) saturate(100%);
+    filter: blur(var(--blur)) hue-rotate(360deg) saturate(100%);
     transform: scale(1.2) rotate(3deg);
   }
   62.5% {
-    filter: blur(20px) hue-rotate(450deg) saturate(135%);
+    filter: blur(var(--blur)) hue-rotate(450deg) saturate(135%);
     transform: scale(1.3) rotate(-1.5deg);
   }
   66.6% {
-    filter: blur(20px) hue-rotate(479.52deg) saturate(147%);
+    filter: blur(var(--blur)) hue-rotate(479.52deg) saturate(147%);
     transform: scale(1.27) rotate(-3deg);
   }
   75% {
-    filter: blur(20px) hue-rotate(540deg) saturate(170%);
+    filter: blur(var(--blur)) hue-rotate(540deg) saturate(170%);
     transform: scale(1.2) rotate(0deg);
   }
   83.3% {
-    filter: blur(20px) hue-rotate(599.76deg) saturate(147%);
+    filter: blur(var(--blur)) hue-rotate(599.76deg) saturate(147%);
     transform: scale(1.27) rotate(3deg);
   }
   87.5% {
-    filter: blur(20px) hue-rotate(630deg) saturate(135%);
+    filter: blur(var(--blur)) hue-rotate(630deg) saturate(135%);
     transform: scale(1.3) rotate(1.5deg);
   }
   100% {
-    filter: blur(20px) hue-rotate(720deg) saturate(100%);
+    filter: blur(var(--blur)) hue-rotate(720deg) saturate(100%);
     transform: scale(1.2) rotate(-3deg);
   }
 `;
 
 const CreateButton = styled.button`
-  --blur: '20px';
   position: relative;
-  width: 16.875rem;
-  height: 3.125rem;
+  width: calc(var(--scaling-factor) * 4.25rem);
+  height: calc(var(--scaling-factor) * 0.75rem);
   background-color: white;
-  font-size: 1.5rem;
+  font-size: calc(var(--scaling-factor) * 0.375rem);
   border: none;
   border-radius: var(--border-radius);
   z-index: 1;
@@ -285,4 +294,5 @@ const DownloadLink = styled.a`
   display: flex;
   align-items: center;
   padding: 1.2rem;
+  font-size: calc(var(--scaling-factor) * 0.25rem);
 `;
