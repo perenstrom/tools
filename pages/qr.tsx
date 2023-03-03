@@ -224,6 +224,7 @@ const CreateButton = styled.button`
   border: none;
   border-radius: var(--border-radius);
   z-index: 1;
+  color: black;
 
   &:before {
     content: '';
