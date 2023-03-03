@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { FormEventHandler, useState } from 'react';
 import QRCode from 'qrcode';
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 const QrPage: NextPage<{}> = () => {
   const [inputText, setInputText] = useState('');
@@ -10,6 +10,7 @@ const QrPage: NextPage<{}> = () => {
   const [error, setError] = useState('');
 
   const [svgText, setSvgText] = useState('');
+  const [pngText, setPngText] = useState('');
   const [qrCodeElement, setQrCodeElement] = useState<HTMLCanvasElement>();
 
   const generateQR: FormEventHandler<HTMLFormElement> = async (event) => {
@@ -18,12 +19,23 @@ const QrPage: NextPage<{}> = () => {
 
     QRCode.toCanvas(
       inputText,
-      { errorCorrectionLevel: 'H' },
+      { errorCorrectionLevel: 'H', width: 400, margin: 0 },
       (error, canvas) => {
         if (error) {
           setError(error.message);
         }
         setQrCodeElement(canvas);
+      }
+    );
+
+    QRCode.toDataURL(
+      inputText,
+      { errorCorrectionLevel: 'H', width: 400, margin: 3 },
+      (error, string) => {
+        if (error) {
+          setError(error.message);
+        }
+        setPngText(string);
       }
     );
 
@@ -44,8 +56,9 @@ const QrPage: NextPage<{}> = () => {
       }
     );
   };
+
   return (
-    <Wrapper>
+    <Wrapper qrShown={!!qrCodeElement}>
       <Head>
         <title>QR Code Generator</title>
       </Head>
@@ -59,17 +72,25 @@ const QrPage: NextPage<{}> = () => {
             id="qr-text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
+            autoFocus
           />
           <CreateButton type="submit">Create QR Code</CreateButton>
         </Form>
         {error && <div>{error}</div>}
         {qrCodeElement && (
-          <QRCodeWrapper>
-            <img src={qrCodeElement.toDataURL()} alt="QR Code" />
-            <a href={svgText} download="qr.svg">
-              Download svg
-            </a>
-          </QRCodeWrapper>
+          <>
+            <QRCodeWrapper>
+              <img src={qrCodeElement.toDataURL()} alt="QR Code" />
+            </QRCodeWrapper>
+            <LinkWrapper>
+              <DownloadLink href={svgText} download="qr.svg">
+                Download svg
+              </DownloadLink>
+              <DownloadLink href={pngText} download="qr.png">
+                Download png
+              </DownloadLink>
+            </LinkWrapper>
+          </>
         )}
       </ContentWrapper>
     </Wrapper>
@@ -78,11 +99,22 @@ const QrPage: NextPage<{}> = () => {
 
 export default QrPage;
 
-const Wrapper = styled.div`
+interface WrapperProps {
+  readonly qrShown: boolean;
+}
+const Wrapper = styled.div<WrapperProps>`
+  --border-radius: 0.5rem;
   font-family: 'Nunito', sans-serif;
-  background-color: #222;
+  background-color: #050316;
   height: 100%;
   padding-top: 12rem;
+  transition: padding-top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  ${(props) =>
+    props.qrShown &&
+    css`
+      padding-top: 4rem;
+    `};
 `;
 
 const ContentWrapper = styled.div`
@@ -99,15 +131,23 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-bottom: 4rem;
 `;
 
 const Input = styled.input`
-  margin-bottom: 3rem;
+  margin-bottom: 5rem;
   font-size: 2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   border: none;
   text-align: center;
   width: 100%;
+
+  box-shadow: 0 0 50px rgba(116, 203, 255, 0.3);
+  transition: box-shadow 0.3s;
+
+  &:focus {
+    box-shadow: 0 0 50px rgba(116, 203, 255, 1);
+  }
 `;
 
 const animate = keyframes`
@@ -173,7 +213,7 @@ const CreateButton = styled.button`
   background-color: white;
   font-size: 1.5rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   z-index: 1;
 
   &:before {
@@ -217,10 +257,32 @@ const CreateButton = styled.button`
     height: 100%;
     background: white;
     z-index: -1;
-  border-radius: 0.5rem;
+    border-radius: var(--border-radius);
   }
 `;
 
 const QRCodeWrapper = styled.div`
-  max-width: 32rem;
+  max-width: 16rem;
+  padding: 1rem;
+  background: white;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+`;
+
+const LinkWrapper = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
+const DownloadLink = styled.a`
+  display: block;
+  background: white;
+  border-radius: var(--border-radius);
+  color: black;
+  text-decoration: none;
+  height: 2rem;
+  display: flex;
+  display: flex;
+  align-items: center;
+  padding: 1.2rem;
 `;
